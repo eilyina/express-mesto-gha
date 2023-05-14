@@ -70,7 +70,8 @@ module.exports.likeCard = (req, res) => {
     .orFail()
     .then(cards => res.send(cards))
     .catch((err) => {
-      if (err instanceof mongoose.Error.ValidationError) {
+      console.log(err)
+      if (err instanceof mongoose.Error.CastError) {
         res.status(400).send({ message: "Переданы некорректные данные" })
         return
       }
@@ -92,13 +93,13 @@ module.exports.dislikeCard = (req, res) => {
     .orFail()
     .then(users => res.send(users))
     .catch((err) => {
-      if (err instanceof mongoose.Error.ValidationError) {
+      if (err instanceof mongoose.Error.CastError) {
         res.status(400).send({ message: "Переданы некорректные данные" })
         return
       }
       if (err instanceof mongoose.Error.DocumentNotFoundError) {
-        res.status(404).send({ message: "Данные не найдены" })
-        return
+        return res.status(404).send({ message: "Данные не найдены" })
+
       }
       return res.status(500).send({ message: "Произошла неизвестная ошибка" })
 
