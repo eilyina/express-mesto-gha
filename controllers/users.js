@@ -51,6 +51,7 @@ module.exports.updateUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.findByIdAndUpdate(req.user._id, { name, about, avatar }, { new: true, runValidators: true })
+    .orFail()
     .then(user => {
       res.send({ user })
     })
@@ -59,7 +60,7 @@ module.exports.updateUser = (req, res) => {
         res.status(400).send({ message: "Переданы некорректные данные" })
         return
       }
-      if (err instanceof mongoose.Error.CastError) {
+      if (err instanceof mongoose.Error.DocumentNotFoundError) {
         res.status(404).send({ message: "Данные не найдены" })
         return
       }
@@ -72,6 +73,7 @@ module.exports.updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
+    .orFail()
     .then(user => res.send({ user }))
     .catch((err) => {
 
@@ -79,7 +81,7 @@ module.exports.updateUserAvatar = (req, res) => {
         res.status(404).send({ message: "Переданы некорректные данные" })
         return
       }
-      if (err instanceof mongoose.Error.CastError) {
+      if (err instanceof mongoose.Error.DocumentNotFoundError) {
         res.status(400).send({ message: "Данные не найдены" })
         return
       }
