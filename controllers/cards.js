@@ -11,12 +11,16 @@ module.exports.getCards = (req, res) => {
 module.exports.getCardById = (req, res) => {
 
   Card.findById(req.params.id)
-
+    .orFail()
     .then(cards => res.send(cards))
     .catch((err) => {
+      if (err instanceof mongoose.Error.DocumentNotFoundError) {
+        return res.status(404).send({ message: "Данные не найдены" })
+
+      }
       if (err instanceof mongoose.Error.CastError) {
-        res.status(404).send({ message: "Данные не найдены" })
-        return
+        return res.status(400).send({ message: "Переданы некорректные данные" })
+
       }
       return res.status(500).send({ message: "Произошла неизвестная ошибка" })
     }
@@ -26,12 +30,16 @@ module.exports.getCardById = (req, res) => {
 module.exports.deleteCard = (req, res) => {
 
   Card.findByIdAndDelete(req.params.id)
-
+    .orFail()
     .then(cards => res.send(cards))
     .catch((err) => {
+      if (err instanceof mongoose.Error.DocumentNotFoundError) {
+        return res.status(404).send({ message: "Данные не найдены" })
+
+      }
       if (err instanceof mongoose.Error.CastError) {
-        res.status(404).send({ message: "Данные не найдены" })
-        return
+        return res.status(400).send({ message: "Переданы некорректные данные" })
+
       }
       return res.status(500).send({ message: "Произошла неизвестная ошибка" })
     }
@@ -59,15 +67,16 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   )
+    .orFail()
     .then(cards => res.send(cards))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
         res.status(400).send({ message: "Переданы некорректные данные" })
         return
       }
-      if (err instanceof mongoose.Error.CastError) {
-        res.status(404).send({ message: "Данные не найдены" })
-        return
+      if (err instanceof mongoose.Error.DocumentNotFoundError) {
+        return res.status(404).send({ message: "Данные не найдены" })
+
       }
       return res.status(500).send({ message: "Произошла неизвестная ошибка" })
 
@@ -80,13 +89,14 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   )
+    .orFail()
     .then(users => res.send(users))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
         res.status(400).send({ message: "Переданы некорректные данные" })
         return
       }
-      if (err instanceof mongoose.Error.CastError) {
+      if (err instanceof mongoose.Error.DocumentNotFoundError) {
         res.status(404).send({ message: "Данные не найдены" })
         return
       }
