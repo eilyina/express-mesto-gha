@@ -11,15 +11,18 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 });
 
 // подключаем мидлвары, роуты и всё остальное...
+
 app.use((req, res, next) => {
   req.user = {
-    _id: '645e58143db34115835d7890' // вставьте сюда _id созданного в предыдущем пункте пользователя
+    _id: '645dbebd2ec3a996cb3a1c37' // вставьте сюда _id созданного в предыдущем пункте пользователя
   };
 
   next();
 });
 
-app.use('/users', require('./routes/users'));
+
+app.use('/users', require('./routes/users'))
 app.use('/cards', require('./routes/cards'));
+app.use('/', require('./routes/router'));
 
 app.listen(3000, () => { console.log('подключен') })
