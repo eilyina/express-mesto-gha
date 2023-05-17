@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { NOT_FOUND } = require('../utils/error-response-code')
+const { NOT_FOUND } = require('../utils/error-response-code');
 
 router.use('/users', require('./users'));
 

@@ -41,7 +41,7 @@ module.exports.createUser = (req, res) => {
         res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
         return;
       }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла неизвестная ошибка' });
+      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла неизвестная ошибка' });
     });
 };
 
@@ -62,7 +62,7 @@ module.exports.updateUser = (req, res) => {
         res.status(NOT_FOUND).send({ message: 'Данные не найдены' });
         return;
       }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла неизвестная ошибка' });
+      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла неизвестная ошибка' });
     });
 };
 
@@ -81,6 +81,6 @@ module.exports.updateUserAvatar = (req, res) => {
         res.status(NOT_FOUND).send({ message: 'Данные не найдены' });
         return;
       }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла неизвестная ошибка' });
+      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла неизвестная ошибка' });
     });
 };

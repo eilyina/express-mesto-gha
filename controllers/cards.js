@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
+const Card = require('../models/card');
+
 const {
   INTERNAL_SERVER_ERROR,
   BAD_REQUEST,
   NOT_FOUND,
 
 } = require('../utils/error-response-code');
-
-const Card = require('../models/card');
 
 module.exports.getCards = (req, res) => {
   Card.find({})
@@ -20,7 +20,6 @@ module.exports.getCardById = (req, res) => {
     .orFail()
 
     .then((card) => {
-      throw 'Error2';
       res.send(card);
     })
     .catch((err) => {
@@ -61,7 +60,7 @@ module.exports.createCard = (req, res) => {
         res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
         return;
       }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла неизвестная ошибка' });
+      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла неизвестная ошибка' });
     });
 };
 
@@ -74,15 +73,14 @@ module.exports.likeCard = (req, res) => {
     .orFail()
     .then((card) => res.send(card))
     .catch((err) => {
-      console.log(err);
       if (err instanceof mongoose.Error.CastError) {
         res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
         return;
       }
       if (err instanceof mongoose.Error.DocumentNotFoundError) {
-        return res.status(NOT_FOUND).send({ message: 'Данные не найдены' });
+        res.status(NOT_FOUND).send({ message: 'Данные не найдены' });
       }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла неизвестная ошибка' });
+      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла неизвестная ошибка' });
     });
 };
 
@@ -100,8 +98,8 @@ module.exports.dislikeCard = (req, res) => {
         return;
       }
       if (err instanceof mongoose.Error.DocumentNotFoundError) {
-        return res.status(NOT_FOUND).send({ message: 'Данные не найдены' });
+        res.status(NOT_FOUND).send({ message: 'Данные не найдены' });
       }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла неизвестная ошибка' });
+      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла неизвестная ошибка' });
     });
 };

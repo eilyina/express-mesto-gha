@@ -20,4 +20,6 @@ app.use((req, res, next) => {
 
 app.use(require('./routes/index'));
 
-app.listen(3000, () => { console.log('подключен'); });
+app.listen(3000, () => {
+  console.log('подключен');
+});
