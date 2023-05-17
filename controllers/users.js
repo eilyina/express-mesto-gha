@@ -12,7 +12,7 @@ module.exports.getUsers = (req, res) => {
     .then((users) => {
       res.send(users);
     })
-    .catch(() => res.status(500).send({ message: 'Произошла неизвестная ошибка' }));
+    .catch(() => res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла неизвестная ошибка' }));
 };
 
 module.exports.getUserById = (req, res) => {

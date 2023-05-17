@@ -79,6 +79,7 @@ module.exports.likeCard = (req, res) => {
       }
       if (err instanceof mongoose.Error.DocumentNotFoundError) {
         res.status(NOT_FOUND).send({ message: 'Данные не найдены' });
+        return
       }
       res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла неизвестная ошибка' });
     });
@@ -99,6 +100,7 @@ module.exports.dislikeCard = (req, res) => {
       }
       if (err instanceof mongoose.Error.DocumentNotFoundError) {
         res.status(NOT_FOUND).send({ message: 'Данные не найдены' });
+        return;
       }
       res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла неизвестная ошибка' });
     });
