@@ -1,70 +1,64 @@
 const mongoose = require('mongoose');
 const Card = require('../models/card');
+const ForbiddenError = require('../utils/ForbiddenError');
 
 const {
   INTERNAL_SERVER_ERROR,
   BAD_REQUEST,
   NOT_FOUND,
+  FORBIDDEN
 
 } = require('../utils/error-response-code');
 
-module.exports.getCards = (req, res) => {
+module.exports.getCards = (req, res, next) => {
   Card.find({})
 
     .then((cards) => res.send(cards))
-    .catch(() => res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла неизвестная ошибка' }));
+    .catch(err => next(err))
 };
 
-module.exports.getCardById = (req, res) => {
+module.exports.getCardById = (req, res, next) => {
   Card.findById(req.params.id)
     .orFail()
 
     .then((card) => {
       res.send(card);
     })
-    .catch((err) => {
-      if (err instanceof mongoose.Error.DocumentNotFoundError) {
-        return res.status(NOT_FOUND).send({ message: 'Данные не найдены' });
-      }
-      if (err instanceof mongoose.Error.CastError) {
-        return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
-      }
-      // console.log(headers[http2.constants.HTTP2_HEADER_STATUS]);
-      // console.log(NGHTTP2_STREAM_CLOSED)
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла неизвестная ошибка' });
-    });
-};
+    .catch(err => next(err))
+  }
 
-module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndDelete(req.params.id)
+module.exports.deleteCard = (req, res, next) => {
+  Card.findById(req.params.id)
     .orFail()
-    .then((card) => res.send(card))
-    .catch((err) => {
-      if (err instanceof mongoose.Error.DocumentNotFoundError) {
-        return res.status(NOT_FOUND).send({ message: 'Данные не найдены' });
+    .then((card) => {
+      console.log(card.owner.toString())
+      console.log(req.user._id)
+      if (card.owner.toString() !== req.user._id) {
+        return next(new ForbiddenError("Запрещено редактировать чужие карточки"))
+        // res.status(FORBIDDEN).send({ message: 'Запрещено редактировать чужие карточки' });
+
       }
-      if (err instanceof mongoose.Error.CastError) {
-        return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
-      }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла неизвестная ошибка' });
-    });
+      console.log(req.params.id)
+      return Card.findByIdAndDelete(req.params.id)
+
+    })
+    .then(card =>
+
+      res.send({ card, message: 'карточка успешно удалена' })
+
+    )
+    .catch(err => next(err))
 };
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send({ card }))
-    .catch((err) => {
-      if (err instanceof mongoose.Error.ValidationError) {
-        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
-        return;
-      }
-      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла неизвестная ошибка' });
-    });
+    .catch(err => next(err))
 };
 
-module.exports.likeCard = (req, res) => {
+module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.id,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
@@ -72,20 +66,10 @@ module.exports.likeCard = (req, res) => {
   )
     .orFail()
     .then((card) => res.send(card))
-    .catch((err) => {
-      if (err instanceof mongoose.Error.CastError) {
-        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
-        return;
-      }
-      if (err instanceof mongoose.Error.DocumentNotFoundError) {
-        res.status(NOT_FOUND).send({ message: 'Данные не найдены' });
-        return
-      }
-      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла неизвестная ошибка' });
-    });
+    .catch(err => next(err))
 };
 
-module.exports.dislikeCard = (req, res) => {
+module.exports.dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.id,
     { $pull: { likes: req.user._id } }, // добавить _id в массив, если его там нет
@@ -93,15 +77,5 @@ module.exports.dislikeCard = (req, res) => {
   )
     .orFail()
     .then((card) => res.send(card))
-    .catch((err) => {
-      if (err instanceof mongoose.Error.CastError) {
-        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
-        return;
-      }
-      if (err instanceof mongoose.Error.DocumentNotFoundError) {
-        res.status(NOT_FOUND).send({ message: 'Данные не найдены' });
-        return;
-      }
-      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла неизвестная ошибка' });
-    });
+    .catch(err => next(err))
 };
