@@ -11,5 +11,5 @@ module.exports = {
   NOT_FOUND,
   FORBIDDEN,
   UNAUTHORIZED,
-  CONFLICT
+  CONFLICT,
 };

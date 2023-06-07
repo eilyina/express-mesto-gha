@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const validator = require('../node_modules/validator');
 const bcrypt = require('bcryptjs');
+const validator = require('../node_modules/validator');
 const UnauthorizedError = require('../utils/UnauthorizedError');
 
 const userSchema = new mongoose.Schema({
@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator: (email) => validator.isEmail(email),
-      message: 'Некоректный Email'
+      message: 'Некоректный Email',
     },
 
   },
@@ -23,23 +23,23 @@ const userSchema = new mongoose.Schema({
     type: String,
     minlength: 2,
     maxlength: 30,
-    default: 'Жак-Ив Кусто'
+    default: 'Жак-Ив Кусто',
   },
 
   about: {
     type: String,
     minlength: 2,
     maxlength: 30,
-    default: 'Исследователь'
+    default: 'Исследователь',
   },
   avatar: {
     type: String,
     validate: {
       validator: (avatar) => validator.isURL(avatar),
-      message: 'Некорректная ссылка'
+      message: 'Некорректная ссылка',
     },
     default:
-      'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png'
+      'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
   },
 });
 

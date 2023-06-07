@@ -1,11 +1,13 @@
 const router = require('express').Router();
-const { NOT_FOUND } = require('../utils/error-response-code');
-const { createUser, login } = require('../controllers/users');
-const auth = require('../middlewares/auth')
 const { celebrate, Joi, errors } = require('celebrate');
+const errorHandler = require('../middlewares/errorHandler');
+const { createUser, login } = require('../controllers/users');
+
+const auth = require('../middlewares/auth');
 const { urlRegExp } = require('../utils/constants');
 
-router.post('/signup',
+router.post(
+  '/signup',
   celebrate({
     body: Joi.object().keys({
       name: Joi.string().min(2).max(30),
@@ -14,7 +16,9 @@ router.post('/signup',
       password: Joi.string().required(),
       email: Joi.string().required().email(),
     }),
-  }), createUser);
+  }),
+  createUser,
+);
 router.post('/signin', celebrate({
   body: Joi.object().keys({
     password: Joi.string().required(),
@@ -25,8 +29,12 @@ router.post('/signin', celebrate({
 router.use(auth);
 router.use('/cards', require('./cards'));
 router.use('/users', require('./users'));
+
 router.use(errors());
-router.use(require('../middlewares/errorHandler'));
-router.use('/', (req, res) => res.status(NOT_FOUND).send({ message: 'Неверный url' }));
+router.use(errorHandler);
+// router.use(
+//   '/',
+//   (req, res, next) => next(new NotFoundError('Неверный url')),
+// );
 
 module.exports = router;
