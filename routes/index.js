@@ -17,11 +17,12 @@ router.use(auth);
 router.use('/cards', require('./cards'));
 router.use('/users', require('./users'));
 
-router.use(errors());
 router.use(
   '/',
   (req, res, next) => next(new NotFoundError('Неверный url')),
 );
+
+router.use(errors());
 router.use(errorHandler);
 
 module.exports = router;
