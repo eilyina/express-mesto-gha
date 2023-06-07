@@ -7,15 +7,21 @@ const { celebrate, Joi } = require('celebrate');
 
 
 router.post('/signup',
-celebrate({
+  celebrate({
+    body: Joi.object().keys({
+      name: Joi.string().min(2).max(30),
+      about: Joi.string().min(2).max(30),
+      avatar: Joi.string().pattern(/(https?:\/\/)(w{3}\.)?([\w.~:х?#(\/@!$&'()*+,;=-]){1,256}#?/),
+      password: Joi.string().required(),
+      email: Joi.string().required().email(),
+    }),
+  }), createUser);
+router.post('/signin',  celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
-  password: Joi.string().required(),
+    password: Joi.string().required(),
     email: Joi.string().required().email(),
   }),
-}), createUser);
-router.post('/signin', login);
+}), login);
 
 router.use(auth);
 
