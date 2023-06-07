@@ -26,7 +26,7 @@ const avatarUpdateSchema = {
   body: Joi.object().keys({
     avatar: Joi.string().pattern(urlRegExp),
   }),
-}
+};
 
 const userRegistrationSchema = {
   body: Joi.object().keys({
@@ -52,4 +52,4 @@ module.exports = {
   avatarUpdateSchema,
   userRegistrationSchema,
   userLoginSchema,
-}
+};

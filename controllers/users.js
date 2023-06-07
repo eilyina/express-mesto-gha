@@ -66,11 +66,10 @@ module.exports.createUser = (req, res, next) => {
     .then((hash) => User.create({
       email, password: hash, name, about, avatar,
     }))
-    .then((user) => {
-      const {
+    .then(() => {
+      res.send({
         email, name, about, avatar,
-      } = user;
-      res.send({ email, name, about, avatar });
+      });
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
@@ -134,12 +133,14 @@ module.exports.login = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       // создадим токен
-      const token = jwt.sign({ _id: user._id },
+      const token = jwt.sign(
+        { _id: user._id },
         secretKey,
-        { expiresIn: '7d' });
+        { expiresIn: '7d' },
+      );
 
       // вернём токен
       res.send({ token });
     })
-    .catch(err => next(err));
+    .catch((err) => next(err));
 };

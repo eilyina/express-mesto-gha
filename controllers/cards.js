@@ -5,7 +5,6 @@ const NotFoundError = require('../utils/NotFoundError');
 const BadRequestError = require('../utils/BadRequestError');
 
 module.exports.getCards = (req, res, next) => {
-  console.log('getCards');
   Card.find({})
 
     .then((cards) => res.send(cards))
