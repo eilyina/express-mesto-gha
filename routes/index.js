@@ -20,7 +20,7 @@ router.use('/users', require('./users'));
 router.use(errors());
 router.use(
   '/',
- (req, res, next) => next(new NotFoundError('Неверный url')),
+  (req, res, next) => next(new NotFoundError('Неверный url')),
 );
 router.use(errorHandler);
 

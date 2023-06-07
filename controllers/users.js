@@ -5,6 +5,7 @@ const { secretKey } = require('../utils/constants');
 const User = require('../models/user');
 const NotFoundError = require('../utils/NotFoundError');
 const BadRequestError = require('../utils/BadRequestError');
+const ConflictError = require('../utils/ConflictError');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -66,15 +67,18 @@ module.exports.createUser = (req, res, next) => {
       email, password: hash, name, about, avatar,
     }))
     .then((user) => {
-      // const {
-      //   email, _id, name, about, avatar,
-      // } = user;
-      res.send({ user });
+      const {
+        email, name, about, avatar,
+      } = user;
+      res.send({ email, name, about, avatar });
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
         next(new BadRequestError('Переданы некорректные данные'));
         return;
+      }
+      if (err.code === 11000) {
+        next(new ConflictError('Пользователь с таким email уже зарегистрирован'));
       }
       next(err);
     });
@@ -137,7 +141,9 @@ module.exports.login = (req, res, next) => {
       );
 
       // вернём токен
-      res.send({ token });
-    })
-    .catch((err) => next(err));
+      res.send({ token })
+        .catch((err) => {
+          next(err);
+        });
+    });
 };
