@@ -7,11 +7,8 @@ const {
   CONFLICT
 } = require('../utils/error-response-code');
 
-const errorHandler = (err, req, res, next)  => {
+const errorHandler = (err, req, res, next) => {
   const { message, status = 500 } = err;
-
-   console.log(err)
-   console.log('olo')
 
   if (err.code == 11000) {
     res.status(CONFLICT).send({ message: 'Пользователь с таким email уже зарегистрирован' });
@@ -32,12 +29,6 @@ const errorHandler = (err, req, res, next)  => {
     res.status(UNAUTHORIZED).send({ message: 'Неправильные почта или пароль' });
     return;
   }
-
-  // if (card.owner.toString() !== req.user._id) {
-  //   return res.status(FORBIDDEN).send({ message: 'Запрещено редактировать чужие карточки' });
-
-  // }
-
 
   res
     .status(status)

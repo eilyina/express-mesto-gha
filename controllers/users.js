@@ -1,41 +1,30 @@
-const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
-
-
+const { secretKey } = require('../utils/constants');
 const User = require('../models/user');
-// const {
-//   INTERNAL_SERVER_ERROR,
-//   BAD_REQUEST,
-//   NOT_FOUND,
-// } = require('../utils/error-response-code');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
-      //throw new Error("sksk")
       res.send(users);
     })
     .catch(err => next(err));
 };
 
-module.exports.getUserById = (req, res,next) => {
+module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.id)
     .orFail()
     .then((user) => {
-      res.send({user})
+      res.send({ user })
     })
     .catch(err => next(err));
 };
 
-module.exports.getUserInfo = (req, res, next)  => {
+module.exports.getUserInfo = (req, res, next) => {
   User.findById(req.user._id)
     .orFail()
     .then((user) => {
-      // const { email, name, about, avatar } = user;
-      // res.send({ email, name, about, avatar})
-      res.send({user})
+      res.send({ user })
     })
 
     .catch(err => next(err));
@@ -74,16 +63,14 @@ module.exports.updateUserAvatar = (req, res, next) => {
     .catch(err => next(err));
 };
 
-// controllers/users.js
-
-module.exports.login = (req, res,next) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
       // создадим токен
       const token = jwt.sign({ _id: user._id },
-        'some-secret-key',
+        secretKey,
         { expiresIn: '7d' });
 
       // вернём токен

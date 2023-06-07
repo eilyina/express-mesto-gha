@@ -1,14 +1,5 @@
-const mongoose = require('mongoose');
 const Card = require('../models/card');
 const ForbiddenError = require('../utils/ForbiddenError');
-
-const {
-  INTERNAL_SERVER_ERROR,
-  BAD_REQUEST,
-  NOT_FOUND,
-  FORBIDDEN
-
-} = require('../utils/error-response-code');
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
@@ -25,7 +16,7 @@ module.exports.getCardById = (req, res, next) => {
       res.send(card);
     })
     .catch(err => next(err))
-  }
+}
 
 module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.id)
@@ -35,7 +26,6 @@ module.exports.deleteCard = (req, res, next) => {
       console.log(req.user._id)
       if (card.owner.toString() !== req.user._id) {
         return next(new ForbiddenError("Запрещено редактировать чужие карточки"))
-        // res.status(FORBIDDEN).send({ message: 'Запрещено редактировать чужие карточки' });
 
       }
       console.log(req.params.id)
