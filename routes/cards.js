@@ -9,9 +9,9 @@ router.get('/', getCards);
 router.post('/', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: Joi.string().required(),
+    link: Joi.string().required().pattern(/(https?:\/\/)(w{3}\.)?([\w.~:х?#(\/@!$&'()*+,;=-]){1,256}#?/),
   }),
-}),createCard);
+}), createCard);
 router.get('/:id', getCardById);
 router.delete('/:id', celebrate({
   // валидируем параметры
@@ -19,8 +19,18 @@ router.delete('/:id', celebrate({
     id: Joi.string().hex().length(24),
   }),
 
-  }),deleteCard);
-router.put('/:id/likes', likeCard);
-router.delete('/:id/likes', dislikeCard);
+}), deleteCard);
+router.put('/:id/likes', celebrate({
+  params: Joi.object().keys({
+    id: Joi.string().hex().length(24),
+  }),
+}), likeCard);
+router.delete('/:id/likes',
+  celebrate({
+    params: Joi.object().keys({
+      id: Joi.string().hex().length(24),
+    }),
+  }),
+  dislikeCard);
 
 module.exports = router;

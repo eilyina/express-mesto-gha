@@ -16,7 +16,7 @@ router.post('/signup',
       email: Joi.string().required().email(),
     }),
   }), createUser);
-router.post('/signin',  celebrate({
+router.post('/signin', celebrate({
   body: Joi.object().keys({
     password: Joi.string().required(),
     email: Joi.string().required().email(),

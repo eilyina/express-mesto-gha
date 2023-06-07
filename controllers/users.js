@@ -23,15 +23,20 @@ module.exports.getUsers = (req, res, next) => {
 module.exports.getUserById = (req, res,next) => {
   User.findById(req.params.id)
     .orFail()
-    .then((users) => { res.send(users); })
+    .then((user) => {
+      res.send({user})
+    })
     .catch(err => next(err));
 };
 
 module.exports.getUserInfo = (req, res, next)  => {
   User.findById(req.user._id)
     .orFail()
-    .then((users) => {
-      res.send(users); })
+    .then((user) => {
+      // const { email, name, about, avatar } = user;
+      // res.send({ email, name, about, avatar})
+      res.send({user})
+    })
 
     .catch(err => next(err));
 };
