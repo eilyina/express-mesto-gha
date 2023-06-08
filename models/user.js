@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const validator = require('../node_modules/validator');
+const validator = require('validator');
+// библиотека validator используется в models/user,
+// поменяла validator как npm пакет, было из папки node_modules
 const UnauthorizedError = require('../utils/UnauthorizedError');
 
 const userSchema = new mongoose.Schema({
